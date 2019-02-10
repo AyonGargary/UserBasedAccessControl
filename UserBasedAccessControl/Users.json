@@ -1,0 +1,29 @@
+﻿[
+  {
+    "Id": 0,
+    "Name": "agargary",
+    "Pwd": "HJ95T0UDWH",
+    "Roles": {
+      "Name": "admin",
+      "Permissions": [ 2, 3, 0, 1 ]
+    }
+  },
+  {
+    "Id": 1,
+    "Name": "ragini",
+    "Pwd": "ragini",
+    "Roles": {
+      "Name": "contributor",
+      "Permissions": [ 2, 0, 1 ]
+    }
+  },
+  {
+    "Id": 2,
+    "Name": "anshuman",
+    "Pwd": "anshuman",
+    "Roles": {
+      "Name": "viewer",
+      "Permissions": [ 0 ]
+    }
+  }
+]
