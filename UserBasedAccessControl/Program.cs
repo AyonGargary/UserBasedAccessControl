@@ -39,45 +39,16 @@ namespace UserBasedAccessControl
                 
 
             string choice = "";
-            Console.WriteLine("User Operations\n1. Add User\t2. Update User Roles\t3. Delete User\n");
-            Console.WriteLine("Data Operations\n4. Add Product\t5. Modify Product\t6. Delete product\t7.Print Products");
+            Console.WriteLine("Data Operations\n1. Add Product\t2. Modify Product\t3. Delete product\t4.Print Products");
             while (choice != "exit")
             {
                 Console.WriteLine("Make a Choice");
                 int c = Convert.ToInt32(Console.ReadLine());
                 switch(c)
                 {
-                    #region User Cases
-                    case 1:
-                        Console.WriteLine("Provide User Name");
-                        string userName = Console.ReadLine();
-                        Console.WriteLine("Provide Role");
-                        string role = Console.ReadLine();
-                        Console.WriteLine("Provide Password");
-                        string pwd = Console.ReadLine();
-
-                        resourceHandler.AddUser(userName, role, pwd);
-                        break;
-
-                    case 2:
-                        Console.WriteLine("Provide User Name");
-                        userName = Console.ReadLine();
-                        Console.WriteLine("Provide Role");
-                        role = Console.ReadLine();
-
-                        resourceHandler.UpdateUser(userName, role);
-                        break;
-
-                    case 3:
-                        Console.WriteLine("Provide User Name");
-                        userName = Console.ReadLine();
-
-                        resourceHandler.DeleteUser(userName);
-                        break;
-                    #endregion
 
                     #region Product Cases
-                    case 4:
+                    case 1:
                         Console.WriteLine("Provide Id");
                         int id = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Provide Product Name");
@@ -93,7 +64,7 @@ namespace UserBasedAccessControl
                         productOperation.AddProduct(product);
                         break;
 
-                    case 5:
+                    case 2:
                         Console.WriteLine("Provide Id");
                         id = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Provide Product Name");
@@ -109,13 +80,13 @@ namespace UserBasedAccessControl
                         productOperation.UpdateProduct(product);
                         break;
 
-                    case 6:
+                    case 3:
                         Console.WriteLine("Provide Id");
                         id = Convert.ToInt32(Console.ReadLine());
                         productOperation.DeleteProduct(id);
                         break;
 
-                    case 7:
+                    case 4:
                         productOperation.PrintProducts();
                         break;
 

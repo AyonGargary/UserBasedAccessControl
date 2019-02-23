@@ -32,14 +32,18 @@ namespace UserBasedAccessControl.Handlers
                 Logger.LogError("Current User has Viewer Access To Product Only");
                 return;
             }
-            List<Product> products = new List<Product>();
-            products = GetProducts();
-            products.Add(product);
+            Object _lockObject = null;
+            lock (_lockObject)
+            {
+                List<Product> products = new List<Product>();
+                products = GetProducts();
+                products.Add(product);
 
-            string json = JsonConvert.SerializeObject(products);
+                string json = JsonConvert.SerializeObject(products);
 
-            if (File.Exists(Constants.ProductJSONPath))
-                File.WriteAllText(Constants.ProductJSONPath, json);
+                if (File.Exists(Constants.ProductJSONPath))
+                    File.WriteAllText(Constants.ProductJSONPath, json);
+            }
         }
 
         /// <summary>
@@ -53,20 +57,96 @@ namespace UserBasedAccessControl.Handlers
                 Logger.LogError("Current User does not have Admin Access to Delete Product");
                 return;
             }
-            List<Product> product = GetProducts();
-            foreach (Product item in product)
+            Object _lockObject = null;
+            lock (_lockObject)
             {
-                if (item.Id == productId)
+                List<Product> product = GetProducts();
+                foreach (Product item in product)
                 {
-                    product.Remove(item);
-                    break;
+                    if (item.Id == productId)
+                    {
+                        product.Remove(item);
+                        break;
+                    }
+                }
+
+
+                string json = JsonConvert.SerializeObject(product);
+
+                if (File.Exists(Constants.ProductJSONPath))
+                    File.WriteAllText(Constants.ProductJSONPath, json);
+            }
+        }
+
+        public void BuyProduct(string product, int amount)
+        {
+            Product p = null;
+            foreach(Product _product in GetProducts())
+            {
+                if(_product.ProductName.Equals(product,StringComparison.InvariantCultureIgnoreCase))
+                {
+                    p = _product;
                 }
             }
+            if (p == null)
+            {
+                Logger.LogError("No Such Product found");
+                return;
+            }
+            BuyProduct(p, amount);
+        }
 
-            string json = JsonConvert.SerializeObject(product);
+        /// <summary>
+        /// Buy Inventory function, checks if product exists
+        /// If quantity exists, product can be bought, and quantity reduces by amount 
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="amount"></param>
+        private void BuyProduct(Product product, int amount)
+        {
+            if(product.Quantity < amount)
+            {
+                Logger.LogError("Product can't be bought due to insufficient quantity");
+                return;
+            }
+            else
+            {
+                product.Quantity = product.Quantity - amount;
+                UpdateProduct(product);
+            }
+        }
 
-            if (File.Exists(Constants.ProductJSONPath))
-                File.WriteAllText(Constants.ProductJSONPath, json);
+        public void ReturnProduct(string product, int amount)
+        {
+            Product p = null;
+            foreach (Product _product in GetProducts())
+            {
+                if (_product.ProductName.Equals(product, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    p = _product;
+                }
+            }
+            ReturnProduct(p, amount);
+        }
+
+        /// <summary>
+        /// Buy Inventory function, checks if product exists
+        /// If quantity exists, product can be bought, and quantity reduces by amount 
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="amount"></param>
+        private void ReturnProduct(Product product, int amount)
+        {
+            if (product != null)
+            {
+                product.Quantity = product.Quantity - amount;
+                UpdateProduct(product);
+            }
+            else
+            {
+                Logger.LogInfo("Product not present!! Adding product");
+                AddProduct(product);
+            }
         }
 
         /// <summary>
@@ -80,28 +160,33 @@ namespace UserBasedAccessControl.Handlers
                 Logger.LogError("Current User has Viewer Access To Product Only");
                 return;
             }
-            List<Product> products = GetProducts();
-            foreach (var item in products)
+            Object _lockObject = null;
+            lock (_lockObject)
             {
-                if (item.Id == product.Id)
+                List<Product> products = GetProducts();
+                foreach (var item in products)
                 {
-                    item.Id = product.Id;
-                    item.ProductName = product.ProductName;
-                    item.Quantity = product.Quantity;
-                    item.Supplier = product.Supplier;
-                    item.Cost = product.Cost;
-                    break;
+                    if (item.Id == product.Id)
+                    {
+                        item.Id = product.Id;
+                        item.ProductName = product.ProductName;
+                        item.Quantity = product.Quantity;
+                        item.Supplier = product.Supplier;
+                        item.Cost = product.Cost;
+                        break;
+                    }
                 }
+
+                string json = JsonConvert.SerializeObject(products);
+
+                if (File.Exists(Constants.ProductJSONPath))
+                    File.WriteAllText(Constants.ProductJSONPath, json);
             }
-
-            string json = JsonConvert.SerializeObject(products);
-
-            if (File.Exists(Constants.ProductJSONPath))
-                File.WriteAllText(Constants.ProductJSONPath, json);
         }
 
         /// <summary>
         /// Prints all Product
+        /// Read read operation no locking required
         /// </summary>
         public void PrintProducts()
         {

@@ -11,7 +11,7 @@ namespace UserBasedAccessControl
         ResourceHandler resourceHandler = new ResourceHandler();
         public Login(string userName, string password)
         {
-            if (Authentication.authenticateUser(resourceHandler.GetUser(userName), Common.ResourceManagement.NoAction, password))
+            if (Authentication.AuthenticateUser(resourceHandler.GetUser(userName), Common.ResourceManagement.NoAction, password))
                 CurrentUser = userName;
             else
                 CurrentUser = null;
